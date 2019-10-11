@@ -1,0 +1,21 @@
+---
+
+- hosts: localhost
+  tasks:
+    - name: Create Docker Network
+      docker_network:
+        name: "freelancer"
+
+    - name: Create Docker Containers
+      docker_container:
+        name: "Zabbix-FTM-{{ item }}"
+        hostname: "Zabbix-FTM-{{ item }}"
+        image: docker.io/centos/systemd
+        privileged: true
+        volumes:
+          - /mnt/fs/cgroup:/mnt/fs/cgroup
+        networks:
+          - name: freelancer
+        purge_networks: yes
+        command: /usr/sbin/init /bin/sleep infinity
+      with_sequence: count=1
